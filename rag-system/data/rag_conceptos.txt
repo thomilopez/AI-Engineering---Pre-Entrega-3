@@ -1,0 +1,15 @@
+# RAG: Generación Aumentada por Recuperación
+
+RAG (Retrieval-Augmented Generation) combina recuperación semántica con
+generación fundamentada (grounded). El flujo es: la pregunta del usuario se
+convierte en embedding, se recuperan los fragmentos más relevantes de
+ChromaDB y el LLM responde SOLO basándose en ese contexto.
+
+El prompt actúa como filtro de veracidad: "Eres un asistente técnico.
+Responde solo basándote en el CONTEXTO proporcionado. Si la respuesta no
+está allí, di que no tienes acceso a esa información".
+
+La función principal es async def get_rag_response(query: str), que usa
+el método .ainvoke() para no bloquear el event loop. La salida se valida
+con un modelo Pydantic que contiene la respuesta de texto y las referencias
+utilizadas, forzada con .with_structured_output() y protegida con .with_retry().
